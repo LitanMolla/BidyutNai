@@ -1,0 +1,163 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import { v4 as uuidv4 } from 'uuid';
+import Header from '@/components/Header';
+import ReportSidebar from '@/components/ReportSidebar';
+import ReportModal from '@/components/ReportModal';
+import ChatWidget from '@/components/ChatWidget';
+
+// Dynamically import map with SSR disabled
+const MapComponent = dynamic(() => import('@/components/MapComponent'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-[#0d0d0d]">
+      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#fbbf24]"></div>
+    </div>
+  ),
+});
+
+export default function Home() {
+  const [deviceId, setDeviceId] = useState(null);
+  const [reports, setReports] = useState([]);
+  const [stats, setStats] = useState({ on: 0, off: 0, total: 0 });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [mapCenter, setMapCenter] = useState([23.8103, 90.4125]); // Dhaka default
+  const [mapZoom, setMapZoom] = useState(12);
+
+  // Initialize Zero-Login Identity
+  useEffect(() => {
+    let id = localStorage.getItem('bidyut_device_id');
+    if (!id) {
+      id = uuidv4();
+      localStorage.setItem('bidyut_device_id', id);
+    }
+    setDeviceId(id);
+    
+    // Fetch initial reports
+    fetchReports();
+    
+    // Set up polling (since we might not have full pusher yet)
+    // In a real app we'd subscribe to Pusher here
+    const interval = setInterval(fetchReports, 10000); // 10s poll as fallback
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchReports = async () => {
+    try {
+      const res = await fetch('/api/reports');
+      if (res.ok) {
+        const data = await res.json();
+        setReports(data.reports);
+        
+        // Calculate stats
+        const onCount = data.reports.filter(r => r.status === 'ON').length;
+        const offCount = data.reports.filter(r => r.status === 'OFF').length;
+        setStats({
+          on: onCount,
+          off: offCount,
+          total: data.reports.length
+        });
+      }
+    } catch (err) {
+      console.error("Failed to fetch reports:", err);
+    }
+  };
+
+  const handleMapClick = (latlng) => {
+    setSelectedLocation(latlng);
+    setIsModalOpen(true);
+  };
+
+  const handleReportAdded = (newReport) => {
+    setReports(prev => [newReport, ...prev]);
+    setIsModalOpen(false);
+    fetchReports(); // refresh stats
+  };
+
+  const handleSidebarClick = (report) => {
+    setMapCenter([report.location.lat, report.location.lng]);
+    setMapZoom(16);
+  };
+
+  // Ask for location immediately on visit
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setMapCenter([latitude, longitude]);
+          setMapZoom(14);
+        },
+        (error) => {
+          console.warn("Location access denied on load.");
+        }
+      );
+    }
+  }, []);
+
+  const handleAutoLocationReport = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+    
+    // Show a small UI or rely on browser prompt
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const latlng = { lat: latitude, lng: longitude };
+        
+        setMapCenter([latitude, longitude]);
+        setMapZoom(16);
+        setSelectedLocation(latlng);
+        setIsModalOpen(true);
+      },
+      (error) => {
+        console.error("Error getting location", error);
+        alert("You must allow location access to report an outage for your area.");
+      }
+    );
+  };
+
+  return (
+    <main className="flex flex-col h-screen w-full relative">
+      <Header stats={stats} onReportClick={handleAutoLocationReport} />
+      
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Side: Map */}
+        <div className="w-full md:w-[70%] h-full relative z-0">
+          <MapComponent 
+            reports={reports} 
+            onMapClick={handleMapClick}
+            center={mapCenter}
+            zoom={mapZoom}
+          />
+        </div>
+        
+        {/* Right Side: Sidebar */}
+        <div className="w-full md:w-[30%] h-full hidden md:block border-l border-[var(--color-dark-glass-border)] z-10 glassmorphism relative">
+          <ReportSidebar 
+            reports={reports} 
+            onReportClick={handleSidebarClick} 
+            deviceId={deviceId}
+            onVote={fetchReports}
+          />
+        </div>
+      </div>
+
+      {isModalOpen && selectedLocation && (
+        <ReportModal 
+          location={selectedLocation} 
+          onClose={() => setIsModalOpen(false)}
+          onSubmitSuccess={handleReportAdded}
+          deviceId={deviceId}
+        />
+      )}
+      
+      <ChatWidget deviceId={deviceId} />
+    </main>
+  );
+}
