@@ -95,8 +95,8 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-      <div className="w-full max-w-md p-6 relative rounded-2xl glassmorphism border border-[#c09a59] border-opacity-30">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4">
+      <div className="w-full max-w-md max-h-[90vh] overflow-y-auto p-5 md:p-6 relative rounded-2xl glassmorphism border border-[#c09a59] border-opacity-30 flex-shrink-0">
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"

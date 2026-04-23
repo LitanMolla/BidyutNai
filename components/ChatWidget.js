@@ -112,7 +112,7 @@ export default function ChatWidget({ deviceId }) {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-40 w-80 h-[450px] flex flex-col glassmorphism rounded-2xl border border-[#c09a59] border-opacity-30 overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-5">
+        <div className="fixed bottom-24 right-4 sm:right-6 z-40 w-[calc(100vw-2rem)] sm:w-80 h-[400px] sm:h-[450px] flex flex-col glassmorphism rounded-2xl border border-[#c09a59] border-opacity-30 overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-5">
           <div className="bg-black bg-opacity-50 p-4 border-b border-gray-700">
             <h3 className="font-bold text-white flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-[#fbbf24]" />
