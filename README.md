@@ -39,6 +39,18 @@ A Next.js 16 (App Router) based full-stack web application designed for Banglade
 
 ---
 
+## 🔮 Future Roadmap (পরবর্তী লক্ষ্যসমূহ)
+
+Here are the features prioritized for upcoming releases to further enhance the "Bidyut Nai" platform:
+
+- **Push Notifications (পুশ নোটিফিকেশন):** Implement Web Push logic to allow users to subscribe to specific areas, triggering automated browser alerts whenever an outage occurs or is resolved nearby.
+- **Leaderboard & Reward System (লিডারবোর্ড ও ব্যাজ):** Introduce gamification by giving top contributing users "Trusted Reporter" badges and displaying a leaderboard based on their verified report count and community reputation.
+- **Analytics & Graphs (অ্যানালিটিক্স ড্যাশবোর্ড):** Add detailed statistical charts showing peak load-shedding hours, daily average durations, and monthly dashboard reports natively.
+- **Social Sharing (সোশ্যাল শেয়ার):** One-click buttons to instantly share real-time snapshot reports directly to Facebook, Twitter, and WhatsApp.
+- **Heatmap View Enhancements (উন্নত হিটম্যাপ):** Finalizing the native CSS Heatmap layer for high-density outages, visually alerting major grid-collapse zones to users instantly.
+
+---
+
 ## 💻 Tech Stack
 - **Frontend Framework:** Next.js 16 (App Router), React 18/19 
 - **Styling:** Tailwind CSS v4 (Strict Premium Dark Theme, Glassmorphism, Micro-animations)
