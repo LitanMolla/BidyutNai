@@ -89,10 +89,13 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
       if (res.ok) {
         const data = await res.json();
         onSubmitSuccess(data.report);
+      } else {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to submit report.');
       }
     } catch (err) {
       console.error(err);
-      if (showToast) showToast('Failed to submit report. Please try again.', 'error');
+      if (showToast) showToast(err.message || 'রিপোর্ট জমা দিতে সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'error');
     } finally {
       setIsSubmitting(false);
     }

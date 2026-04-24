@@ -27,6 +27,7 @@ export default function Home() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isFetchingGeo, setIsFetchingGeo] = useState(false);
   const [showFollowUpPrompt, setShowFollowUpPrompt] = useState(null);
+  const [isHeatmapMode, setIsHeatmapMode] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapCenter, setMapCenter] = useState([23.8103, 90.4125]); // Dhaka default
   const [mapZoom, setMapZoom] = useState(12);

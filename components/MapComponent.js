@@ -20,6 +20,16 @@ const createIcon = (status) => {
   });
 };
 
+const createHeatmapIcon = () => {
+  return L.divIcon({
+    className: 'custom-heatmap-marker',
+    html: `<div style="width: 90px; height: 90px; background: radial-gradient(circle, rgba(239,68,68,0.7) 0%, rgba(239,68,68,0.3) 40%, rgba(239,68,68,0) 70%); border-radius: 50%; pointer-events: none; mix-blend-mode: screen;"></div>`,
+    iconSize: [90, 90],
+    iconAnchor: [45, 45],
+    popupAnchor: [0, 0],
+  });
+};
+
 function MapUpdater({ center, zoom }) {
   const map = useMapEvents({});
   useEffect(() => {
@@ -28,7 +38,7 @@ function MapUpdater({ center, zoom }) {
   return null;
 }
 
-export default function MapComponent({ reports, onMapClick, center, zoom, userLocation }) {
+export default function MapComponent({ reports, onMapClick, center, zoom, userLocation, isHeatmapMode }) {
   const formatBDTime = (dateString) => {
     try {
       const date = new Date(dateString);
@@ -82,36 +92,43 @@ export default function MapComponent({ reports, onMapClick, center, zoom, userLo
           </Marker>
         )}
         
-        {reports.map((report) => (
-          <Marker 
-            key={report._id} 
-            position={[report.location.lat, report.location.lng]}
-            icon={createIcon(report.status)}
-          >
-            <Popup className="glass-popup">
-              <div className="p-1 min-w-[200px]">
-                <h3 className="font-bold text-lg mb-1">{report.areaName}</h3>
-                <div className="flex gap-2 items-center mb-2">
-                  <span className={`px-2 py-0.5 rounded text-xs font-bold ${report.status === 'ON' ? 'bg-[#22c55e] text-white' : 'bg-[#ef4444] text-white'}`}>
-                    {report.status === 'ON' ? 'বিদ্যুৎ আছে' : 'বিদ্যুৎ নেই'}
-                  </span>
-                  {report.status === 'OFF' && report.startTime && (
-                    <span className="text-gray-300 text-xs text-glow">
-                      {formatBDTime(report.startTime)} থেকে
-                    </span>
-                  )}
-                </div>
-                {report.imageUrl && (
-                  <img src={report.imageUrl} alt="Proof" className="w-full h-32 object-cover rounded-md mt-2" />
-                )}
-                <div className="mt-2 text-xs flex justify-between items-center text-gray-400">
-                  <span>👍 {report.votes?.trueCount || 0}</span>
-                  <span>👎 {report.votes?.falseCount || 0}</span>
-                </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        {reports.map((report) => {
+          if (isHeatmapMode && report.status === 'ON') return null; // Only show OFF status on heatmap
+
+          return (
+            <Marker 
+              key={report._id} 
+              position={[report.location.lat, report.location.lng]}
+              icon={isHeatmapMode ? createHeatmapIcon() : createIcon(report.status)}
+              interactive={!isHeatmapMode}
+            >
+              {!isHeatmapMode && (
+                <Popup className="glass-popup">
+                  <div className="p-1 min-w-[200px]">
+                    <h3 className="font-bold text-lg mb-1">{report.areaName}</h3>
+                    <div className="flex gap-2 items-center mb-2">
+                      <span className={`px-2 py-0.5 rounded text-xs font-bold ${report.status === 'ON' ? 'bg-[#22c55e] text-white' : 'bg-[#ef4444] text-white'}`}>
+                        {report.status === 'ON' ? 'বিদ্যুৎ আছে' : 'বিদ্যুৎ নেই'}
+                      </span>
+                      {report.status === 'OFF' && report.startTime && (
+                        <span className="text-gray-300 text-xs text-glow">
+                          {formatBDTime(report.startTime)} থেকে
+                        </span>
+                      )}
+                    </div>
+                    {report.imageUrl && (
+                      <img src={report.imageUrl} alt="Proof" className="w-full h-32 object-cover rounded-md mt-2" />
+                    )}
+                    <div className="mt-2 text-xs flex justify-between items-center text-gray-400">
+                      <span>👍 {report.votes?.trueCount || 0}</span>
+                      <span>👎 {report.votes?.falseCount || 0}</span>
+                    </div>
+                  </div>
+                </Popup>
+              )}
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );

@@ -26,6 +26,21 @@ export async function POST(req) {
       duration = Math.round((now - start) / 60000); // duration in minutes
     }
     
+    // Check global spam limit: 1 report per 5 minutes per device
+    if (body.creatorDeviceId) {
+      const lastReport = await Report.findOne({ creatorDeviceId: body.creatorDeviceId }).sort({ createdAt: -1 });
+      if (lastReport) {
+        const diffMs = Date.now() - new Date(lastReport.createdAt).getTime();
+        const diffMinutes = diffMs / 60000;
+        if (diffMinutes < 5) {
+          return NextResponse.json({ 
+            success: false, 
+            error: `আপনি ৫ মিনিটে ১টির বেশি রিপোর্ট করতে পারবেন না। দয়া করে ${Math.ceil(5 - diffMinutes)} মিনিট অপেক্ষা করুন।` 
+          }, { status: 429 });
+        }
+      }
+    }
+    
     // Delete earlier reports from the same user for the same area
     if (body.creatorDeviceId && body.areaName) {
       await Report.deleteMany({

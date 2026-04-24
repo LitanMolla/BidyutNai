@@ -46,6 +46,23 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
     }
   };
 
+  const getDuration = (startTime) => {
+    if (!startTime) return '';
+    const diffMs = new Date() - new Date(startTime);
+    if (diffMs < 0) return '০ মিনিট'; 
+    
+    const totalMinutes = Math.floor(diffMs / 60000);
+    const toBn = n => n.toString().replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+    
+    if (totalMinutes < 60) return `${toBn(totalMinutes)} মিনিট`;
+    
+    const hours = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+    
+    if (mins === 0) return `${toBn(hours)} ঘণ্টা`;
+    return `${toBn(hours)} ঘণ্টা ${toBn(mins)} মিনিট`;
+  };
+
   return (
     <div className="flex flex-col h-full w-full">
       <div className="p-4 border-b border-[var(--color-dark-glass-border)] flex items-center justify-between">
@@ -125,9 +142,9 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
                   </span>
                 </div>
 
-                {report.status === 'OFF' && report.duration && (
+                {report.status === 'OFF' && report.startTime && (
                   <div className="text-xs text-gray-300 mb-2">
-                    সময়কাল: {report.duration} মিনিট
+                    সময়কাল: <span className="font-semibold text-white">{getDuration(report.startTime)}</span> ধ‌রে
                   </div>
                 )}
                 
