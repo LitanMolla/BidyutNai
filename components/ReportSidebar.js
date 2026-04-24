@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
-import { ThumbsUp, ThumbsDown, ShieldCheck, Clock, Maximize2, Minimize2 } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, ShieldCheck, Clock, Maximize2, Minimize2, X } from 'lucide-react';
 // Removed date-fns usage for exact BD time
 
 export default function ReportSidebar({ reports, onReportClick, deviceId, onVote, onAddNewReport, isExpanded, onToggleExpand }) {
   const [filter, setFilter] = useState('all');
+  const [selectedImage, setSelectedImage] = useState(null);
   
   const formatBDTime = (dateString) => {
     try {
@@ -125,8 +126,14 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
                 )}
                 
                 {report.imageUrl && (
-                  <div className="w-full h-20 mb-3 rounded-lg overflow-hidden border border-gray-700">
-                    <img src={report.imageUrl} alt="Proof" className="w-full h-full object-cover" />
+                  <div className="relative w-full h-24 mb-3 rounded-lg overflow-hidden border border-gray-700 group cursor-zoom-in">
+                    <img src={report.imageUrl} alt="Proof" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setSelectedImage(report.imageUrl); }}
+                      className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Maximize2 className="w-6 h-6 text-white drop-shadow-md" />
+                    </button>
                   </div>
                 )}
 
@@ -160,6 +167,29 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
           });
         })()}
       </div>
+
+      {/* Fullscreen Image Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[120] bg-black bg-opacity-90 flex items-center justify-center p-4 md:p-10 animate-in fade-in zoom-in-95 duration-200"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button 
+            className="absolute top-4 right-4 md:top-6 md:right-6 text-white bg-[#1a1a1a] border border-gray-600 p-2 rounded-full hover:bg-gray-800 transition-colors z-10"
+            onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <div className="relative max-w-5xl max-h-full w-full h-full flex items-center justify-center">
+             <img 
+               src={selectedImage} 
+               alt="Full size proof" 
+               className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+               onClick={(e) => e.stopPropagation()}
+             />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
