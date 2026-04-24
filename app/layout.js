@@ -14,6 +14,7 @@ export const metadata = {
   openGraph: {
     title: "বিদ্যুৎ নাই? | লাইভ লোডশেডিং ট্র্যাকার",
     description: "আপনার এলাকায় কি বিদ্যুৎ আছে? ম্যাপের মাধ্যমে লাইভ জানুন বাংলাদেশের কোন এলাকায় বিদ্যুৎ আছে আর কোথায় নেই।",
+    url: "https://bidyut-nai.vercel.app",
     siteName: "Bidyut Nai",
     locale: "bn_BD",
     type: "website",
