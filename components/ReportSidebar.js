@@ -2,7 +2,7 @@
 import { ThumbsUp, ThumbsDown, ShieldCheck, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
-export default function ReportSidebar({ reports, onReportClick, deviceId, onVote }) {
+export default function ReportSidebar({ reports, onReportClick, deviceId, onVote, onAddNewReport }) {
   
   const handleVote = async (reportId, voteType, e) => {
     e.stopPropagation();
@@ -23,8 +23,19 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
 
   return (
     <div className="flex flex-col h-full w-full">
-      <div className="p-4 border-b border-[var(--color-dark-glass-border)]">
-        <h2 className="text-xl font-bold text-[#c09a59] text-glow">Live Reports</h2>
+      <div className="p-4 border-b border-[var(--color-dark-glass-border)] flex items-center justify-between">
+        <h2 className="text-xl md:text-2xl font-bold text-[#c09a59] text-glow">Live Reports</h2>
+        <button 
+          onClick={onAddNewReport}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#c09a59] hover:bg-[#fbbf24] text-black text-xs sm:text-sm font-bold rounded-lg transition-all box-glow shrink-0"
+          title="Add a new power status report"
+        >
+          <span className="text-lg leading-none">+</span>
+          <span className="flex flex-col items-start leading-tight">
+            <span>Submit Report</span>
+            <span className="text-[10px] font-normal leading-tight">(রিপোর্ট দিন)</span>
+          </span>
+        </button>
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -55,7 +66,7 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
                 </div>
 
                 <div className="flex items-center gap-2 mb-3">
-                  <span className={`px-2 py-0.5 rounded text-xs font-bold ${report.status === 'ON' ? 'bg-[#fbbf24] text-black' : 'bg-[#ef4444] text-white'}`}>
+                  <span className={`px-2 py-0.5 rounded text-xs font-bold ${report.status === 'ON' ? 'bg-[#22c55e] text-white' : 'bg-[#ef4444] text-white'}`}>
                     {report.status}
                   </span>
                   <span className="text-xs text-gray-400 flex items-center gap-1">

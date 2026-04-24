@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { X, Upload, CheckCircle2, MapPin } from 'lucide-react';
 
-export default function ReportModal({ location, onClose, onSubmitSuccess, deviceId }) {
+export default function ReportModal({ location, onClose, onSubmitSuccess, deviceId, showToast }) {
   const [status, setStatus] = useState('OFF');
   const [areaName, setAreaName] = useState('');
   const [startTime, setStartTime] = useState(
@@ -34,8 +34,8 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.size > 2 * 1024 * 1024) {
-        alert('Image must be less than 2MB (ছবি ২ মেগাবাইটের কম হতে হবে)');
+      if (file.size > 5 * 1024 * 1024) {
+        if (showToast) showToast('Image must be less than 5MB (ছবি ৫ মেগাবাইটের কম হতে হবে)', 'error');
         return;
       }
       setImageFile(file);
@@ -86,14 +86,14 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
       }
     } catch (err) {
       console.error(err);
-      alert('Failed to submit report. Please try again.');
+      if (showToast) showToast('Failed to submit report. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm p-4">
       <div className="w-full max-w-md max-h-[90vh] overflow-y-auto p-5 md:p-6 relative rounded-2xl glassmorphism border border-[#c09a59] border-opacity-30 flex-shrink-0">
         <button 
           onClick={onClose}
@@ -130,7 +130,7 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
                 type="button"
                 className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md font-bold transition-all ${
                   status === 'ON' 
-                    ? 'bg-[#fbbf24] text-black shadow-[0_0_10px_rgba(251,191,36,0.5)]' 
+                    ? 'bg-[#22c55e] text-white shadow-[0_0_10px_rgba(34,197,94,0.5)]' 
                     : 'text-gray-400 hover:text-gray-200'
                 }`}
                 onClick={() => setStatus('ON')}
@@ -170,14 +170,14 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
             <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer bg-[#1a1a1a] hover:bg-[#222] transition-colors">
               <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                 {imageFile ? (
-                  <div className="flex flex-col items-center gap-1 text-[#fbbf24]">
+                  <div className="flex flex-col items-center gap-1 text-[#22c55e]">
                     <CheckCircle2 className="w-6 h-6" />
                     <span className="text-xs max-w-[200px] truncate">{imageFile.name}</span>
                   </div>
                 ) : (
                   <>
                     <Upload className="w-6 h-6 text-gray-400 mb-2" />
-                    <p className="text-xs text-gray-400">Click to upload image (Max 2MB)</p>
+                    <p className="text-xs text-gray-400">Click to upload image (Max 5MB)</p>
                   </>
                 )}
               </div>
@@ -189,6 +189,7 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
               />
             </label>
           </div>
+
 
           <button 
             type="submit" 

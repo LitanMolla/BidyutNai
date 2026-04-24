@@ -9,7 +9,7 @@ import 'leaflet-defaulticon-compatibility';
 import { formatDistanceToNow } from 'date-fns';
 
 const createIcon = (status) => {
-  const color = status === 'ON' ? '#fbbf24' : '#ef4444';
+  const color = status === 'ON' ? '#22c55e' : '#ef4444';
   
   return L.divIcon({
     className: 'custom-dot-marker',

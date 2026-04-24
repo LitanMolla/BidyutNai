@@ -74,9 +74,9 @@ export default function Home() {
   const [userLocation, setUserLocation] = useState(null);
   const [toast, setToast] = useState(null);
 
-  const showToast = (message) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 3000);
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
   };
 
   // Ask for location immediately on visit
@@ -125,16 +125,20 @@ export default function Home() {
     setReports(prev => [newReport, ...prev]);
     setIsModalOpen(false);
     fetchReports(); // refresh stats
-    showToast("Report submitted successfully!");
+    showToast("Report submitted successfully!", "success");
   };
 
   return (
     <main className="flex flex-col h-screen w-full relative">
-      <Header stats={stats} onReportClick={handleAutoLocationReport} />
+      <Header stats={stats} />
       
       {toast && (
-        <div className="fixed top-24 right-4 z-50 bg-[#fbbf24] text-black font-bold px-6 py-3 rounded-lg shadow-[0_0_15px_rgba(251,191,36,0.5)] animate-in slide-in-from-right-5 fade-in duration-300">
-          {toast}
+        <div className={`fixed top-24 right-4 z-[60] font-bold px-6 py-3 rounded-lg animate-in slide-in-from-right-5 fade-in duration-300 ${
+          toast.type === 'error' 
+            ? 'bg-[#ef4444] text-white shadow-[0_0_15px_rgba(239,68,68,0.5)]' 
+            : 'bg-[#22c55e] text-white shadow-[0_0_15px_rgba(34,197,94,0.5)]'
+        }`}>
+          {toast.message}
         </div>
       )}
 
@@ -156,6 +160,7 @@ export default function Home() {
             onReportClick={handleSidebarClick} 
             deviceId={deviceId}
             onVote={fetchReports}
+            onAddNewReport={handleAutoLocationReport}
           />
         </div>
       </div>
@@ -166,6 +171,7 @@ export default function Home() {
           onClose={() => setIsModalOpen(false)}
           onSubmitSuccess={handleReportAdded}
           deviceId={deviceId}
+          showToast={showToast}
         />
       )}
       
