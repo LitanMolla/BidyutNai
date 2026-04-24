@@ -116,7 +116,7 @@ export default function ChatWidget({ deviceId }) {
           <div className="bg-[#111] p-4 border-b border-gray-700">
             <h3 className="font-bold text-white flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-[#fbbf24]" />
-              Public Live Chat
+              পাবলিক লাইভ চ্যাট
             </h3>
           </div>
           
@@ -126,7 +126,7 @@ export default function ChatWidget({ deviceId }) {
               return (
                 <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                   <span className={`text-xs mb-1 font-semibold ${isMe ? 'text-[#c09a59]' : 'text-[#fbbf24]'}`}>
-                    {isMe ? 'You' : msg.senderName}
+                    {isMe ? 'আপনি' : msg.senderName}
                   </span>
                   <div className={`px-4 py-2 rounded-2xl text-sm max-w-[85%] ${
                     isMe 
@@ -147,7 +147,7 @@ export default function ChatWidget({ deviceId }) {
                 type="text" 
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder={userName ? "Type a message..." : "Click to chat..."}
+                placeholder={userName ? "মেসেজ লিখুন..." : "চ্যাট করতে ক্লিক করুন..."}
                 className="flex-1 bg-[#1a1a1a] text-white text-sm rounded-full px-4 py-2 border border-gray-700 focus:outline-none focus:border-[#c09a59] transition-colors"
               />
               <button 
@@ -166,13 +166,13 @@ export default function ChatWidget({ deviceId }) {
       {showNameModal && isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-[2px]">
           <div className="w-72 p-6 glassmorphism rounded-xl border border-[#c09a59]">
-            <h3 className="text-xl font-bold text-white mb-4 text-glow">Join Chat</h3>
+            <h3 className="text-xl font-bold text-white mb-4 text-glow">চ্যাটে জয়েন করুন</h3>
             <form onSubmit={handleSaveName}>
               <input 
                 name="name"
                 type="text" 
                 required
-                placeholder="Enter First Name"
+                placeholder="আপনার নাম লিখুন"
                 className="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg px-4 py-2 text-white mb-4 focus:outline-none focus:border-[#fbbf24]"
                 autoFocus
               />
@@ -182,13 +182,13 @@ export default function ChatWidget({ deviceId }) {
                   onClick={() => setShowNameModal(false)}
                   className="flex-1 py-2 text-gray-400 hover:text-white"
                 >
-                  Cancel
+                  ক্যান্সেল
                 </button>
                 <button 
                   type="submit"
                   className="flex-1 py-2 bg-[#c09a59] text-black font-bold rounded-lg box-glow"
                 >
-                  Join
+                  জয়েন
                 </button>
               </div>
             </form>

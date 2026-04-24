@@ -1,9 +1,25 @@
 'use client';
 import { ThumbsUp, ThumbsDown, ShieldCheck, Clock } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+// Removed date-fns usage for exact BD time
 
 export default function ReportSidebar({ reports, onReportClick, deviceId, onVote, onAddNewReport }) {
   
+  const formatBDTime = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('bn-BD', {
+        timeZone: 'Asia/Dhaka',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        day: 'numeric',
+        month: 'short'
+      });
+    } catch {
+      return '';
+    }
+  };
+
   const handleVote = async (reportId, voteType, e) => {
     e.stopPropagation();
     
@@ -24,23 +40,22 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
   return (
     <div className="flex flex-col h-full w-full">
       <div className="p-4 border-b border-[var(--color-dark-glass-border)] flex items-center justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-[#c09a59] text-glow">Live Reports</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-[#c09a59] text-glow">লাইভ রিপোর্টস</h2>
         <button 
           onClick={onAddNewReport}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-[#c09a59] hover:bg-[#fbbf24] text-black text-xs sm:text-sm font-bold rounded-lg transition-all box-glow shrink-0"
-          title="Add a new power status report"
+          title="নতুন রিপোর্ট যোগ করুন"
         >
           <span className="text-lg leading-none">+</span>
           <span className="flex flex-col items-start leading-tight">
-            <span>Submit Report</span>
-            <span className="text-[10px] font-normal leading-tight">(রিপোর্ট দিন)</span>
+            <span>নতুন রিপোর্ট দিন</span>
           </span>
         </button>
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {reports.length === 0 ? (
-          <div className="text-center text-gray-500 mt-10">No reports yet</div>
+          <div className="text-center text-gray-500 mt-10">এখনো কোনো রিপোর্ট নেই</div>
         ) : (
           reports.map(report => {
             const isOwner = report.creatorDeviceId === deviceId;
@@ -67,17 +82,17 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
 
                 <div className="flex items-center gap-2 mb-3">
                   <span className={`px-2 py-0.5 rounded text-xs font-bold ${report.status === 'ON' ? 'bg-[#22c55e] text-white' : 'bg-[#ef4444] text-white'}`}>
-                    {report.status}
+                    {report.status === 'ON' ? 'বিদ্যুৎ আছে' : 'বিদ্যুৎ নেই'}
                   </span>
                   <span className="text-xs text-gray-400 flex items-center gap-1">
                     <Clock className="w-3 h-3" />
-                    {formatDistanceToNow(new Date(report.createdAt), { addSuffix: true })}
+                    {formatBDTime(report.createdAt)}
                   </span>
                 </div>
 
                 {report.status === 'OFF' && report.duration && (
                   <div className="text-xs text-gray-300 mb-2">
-                    Duration: {report.duration} mins
+                    সময়কাল: {report.duration} মিনিট
                   </div>
                 )}
                 
@@ -89,7 +104,7 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
 
                 <div className="flex items-center justify-between pt-2 border-t border-gray-700">
                   <div className="text-xs text-gray-400">
-                    Community Verification
+                    ইউজার ভেরিফিকেশন
                   </div>
                   <div className="flex gap-3">
                     <button 

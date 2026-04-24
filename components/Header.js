@@ -10,7 +10,7 @@ export default function Header({ stats }) {
             <Zap className="text-[#fbbf24] w-5 h-5 md:w-6 md:h-6" />
           </div>
           <h1 className="text-lg md:text-2xl font-bold tracking-tight text-white text-glow shrink-0">
-            Bidyut Geche?
+            বিদ্যুৎ গেছে?
           </h1>
         </div>
       </div>
@@ -20,8 +20,8 @@ export default function Header({ stats }) {
         <div className="flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-[#1a1a1a] border border-gray-800 box-glow shrink-0">
           <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#22c55e] animate-pulse shadow-[0_0_8px_#22c55e]"></div>
           <div>
-            <div className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider hidden sm:block">Power Active</div>
-            <div className="text-sm md:text-lg font-bold text-[#22c55e]">{stats.on} <span className="sm:hidden text-[10px] text-gray-400 uppercase">ON</span></div>
+            <div className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider hidden sm:block">বিদ্যুৎ আছে</div>
+            <div className="text-sm md:text-lg font-bold text-[#22c55e]">{stats.on} <span className="sm:hidden text-[10px] text-gray-400 uppercase">আছে</span></div>
           </div>
         </div>
 
@@ -29,8 +29,8 @@ export default function Header({ stats }) {
         <div className="flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-[#1a1a1a] border border-gray-800 shrink-0">
           <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#ef4444]"></div>
           <div>
-            <div className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider hidden sm:block">Power Off</div>
-            <div className="text-sm md:text-lg font-bold text-[#ef4444]">{stats.off} <span className="sm:hidden text-[10px] text-gray-400 uppercase">OFF</span></div>
+            <div className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider hidden sm:block">বিদ্যুৎ নেই</div>
+            <div className="text-sm md:text-lg font-bold text-[#ef4444]">{stats.off} <span className="sm:hidden text-[10px] text-gray-400 uppercase">নেই</span></div>
           </div>
         </div>
 
@@ -38,8 +38,8 @@ export default function Header({ stats }) {
         <div className="flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-[#1a1a1a] border border-gray-800 shrink-0">
           <Activity className="w-4 h-4 md:w-5 md:h-5 text-white opacity-50" />
           <div>
-            <div className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider hidden sm:block">Total Reports</div>
-            <div className="text-sm md:text-lg font-bold text-white">{stats.total} <span className="sm:hidden text-[10px] text-gray-400 uppercase">Total</span></div>
+            <div className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider hidden sm:block">মোট রিপোর্ট</div>
+            <div className="text-sm md:text-lg font-bold text-white">{stats.total} <span className="sm:hidden text-[10px] text-gray-400 uppercase">মোট</span></div>
           </div>
         </div>
       </div>

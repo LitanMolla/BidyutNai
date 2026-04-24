@@ -6,9 +6,15 @@ import { X, Upload, CheckCircle2, MapPin } from 'lucide-react';
 export default function ReportModal({ location, onClose, onSubmitSuccess, deviceId, showToast }) {
   const [status, setStatus] = useState('OFF');
   const [areaName, setAreaName] = useState('');
-  const [startTime, setStartTime] = useState(
-    new Date().toISOString().slice(0, 16) // YYYY-MM-DDTHH:mm
-  );
+  const getLocalDatetimePattern = () => {
+    const now = new Date();
+    // Adjust by local time zone offset to get local string correctly
+    const offsetMs = now.getTimezoneOffset() * 60 * 1000;
+    const localTime = new Date(now.getTime() - offsetMs);
+    return localTime.toISOString().slice(0, 16);
+  };
+
+  const [startTime, setStartTime] = useState(getLocalDatetimePattern());
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -74,7 +80,7 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
           location,
           areaName,
           status,
-          startTime: status === 'OFF' ? startTime : null,
+          startTime: status === 'OFF' && startTime ? new Date(startTime).toISOString() : null,
           imageUrl,
           creatorDeviceId: deviceId
         })
@@ -102,19 +108,19 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-xl md:text-2xl font-bold text-white mb-6 text-glow">Report Power Status <br/><span className="text-sm font-normal text-gray-400">(বিদ্যুৎ অবস্হা জানান)</span></h2>
+        <h2 className="text-xl md:text-2xl font-bold text-white mb-6 text-glow">বিদ্যুৎ অবস্হা জানান</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center justify-between">
-              <span>Area / Location Name <span className="text-xs text-gray-400 ml-1">(এলাকা / জায়গার নাম)</span> *</span>
-              {isFetchingLocation && <span className="text-xs text-[#fbbf24] animate-pulse">Detecting...</span>}
+              <span>এলাকা / জায়গার নাম *</span>
+              {isFetchingLocation && <span className="text-xs text-[#fbbf24] animate-pulse">চেক করা হচ্ছে...</span>}
             </label>
             <div className="relative">
               <input 
                 type="text" 
                 required
-                placeholder="e.g., Mirpur 10, Dhanmondi..."
+                placeholder="উদাহরন: মিরপুর ১০, ধানমন্ডি..."
                 className="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-white focus:outline-none focus:border-[#fbbf24] transition-colors"
                 value={areaName}
                 onChange={(e) => setAreaName(e.target.value)}
@@ -124,7 +130,7 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Current Status <span className="text-xs text-gray-400 ml-1">(বর্তমান অবস্থা)</span></label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">বর্তমান অবস্থা</label>
             <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded-lg border border-gray-700">
               <button
                 type="button"
@@ -135,8 +141,7 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
                 }`}
                 onClick={() => setStatus('ON')}
               >
-                <span>Power ON</span>
-                <span className="text-xs font-normal opacity-80">(বিদ্যুৎ আছে)</span>
+                <span>বিদ্যুৎ আছে</span>
               </button>
               <button
                 type="button"
@@ -147,15 +152,14 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
                 }`}
                 onClick={() => setStatus('OFF')}
               >
-                <span>Power OFF</span>
-                <span className="text-xs font-normal opacity-80">(বিদ্যুৎ নেই)</span>
+                <span>বিদ্যুৎ নেই</span>
               </button>
             </div>
           </div>
 
           {status === 'OFF' && (
             <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-              <label className="block text-sm font-medium text-gray-300 mb-1">Outage Start Time <span className="text-xs text-gray-400 ml-1">(কখন বিদ্যুৎ গেছে)</span></label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">কখন বিদ্যুৎ গেছে</label>
               <input 
                 type="datetime-local" 
                 className="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#fbbf24] transition-colors"
@@ -166,7 +170,7 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Photo Proof <span className="text-xs text-gray-400 ml-1">(ছবি - ঐচ্ছিক)</span></label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">ছবি - ঐচ্ছিক</label>
             <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer bg-[#1a1a1a] hover:bg-[#222] transition-colors">
               <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                 {imageFile ? (
@@ -177,7 +181,7 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
                 ) : (
                   <>
                     <Upload className="w-6 h-6 text-gray-400 mb-2" />
-                    <p className="text-xs text-gray-400">Click to upload image (Max 5MB)</p>
+                    <p className="text-xs text-gray-400">ছবি আপলোড করতে ক্লিক করুন (সর্বোচ্চ ৫ মেগাবাইট)</p>
                   </>
                 )}
               </div>
@@ -196,8 +200,7 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
             disabled={isSubmitting}
             className="w-full py-3 mt-4 flex flex-col items-center justify-center bg-[#c09a59] hover:bg-[#e0b467] text-black font-bold rounded-lg transition-all box-glow disabled:opacity-50"
           >
-            <span>{isSubmitting ? 'Submitting...' : 'Submit Report'}</span>
-            <span className="text-xs font-normal opacity-80">{isSubmitting ? 'আপলোড হচ্ছে...' : '(রিপোর্ট জমা দিন)'}</span>
+            <span>{isSubmitting ? 'আপলোড হচ্ছে...' : 'রিপোর্ট জমা দিন'}</span>
           </button>
         </form>
       </div>

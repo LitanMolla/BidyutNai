@@ -6,7 +6,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet-defaulticon-compatibility';
-import { formatDistanceToNow } from 'date-fns';
+// Removed date-fns for exact BD time
 
 const createIcon = (status) => {
   const color = status === 'ON' ? '#22c55e' : '#ef4444';
@@ -29,6 +29,22 @@ function MapUpdater({ center, zoom }) {
 }
 
 export default function MapComponent({ reports, onMapClick, center, zoom, userLocation }) {
+  const formatBDTime = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('bn-BD', {
+        timeZone: 'Asia/Dhaka',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        day: 'numeric',
+        month: 'short'
+      });
+    } catch {
+      return '';
+    }
+  };
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -62,7 +78,7 @@ export default function MapComponent({ reports, onMapClick, center, zoom, userLo
               iconAnchor: [10, 10],
             })}
           >
-            <Popup className="glass-popup">You are here</Popup>
+            <Popup className="glass-popup">আপনি এখানে আছেন</Popup>
           </Marker>
         )}
         
@@ -76,12 +92,12 @@ export default function MapComponent({ reports, onMapClick, center, zoom, userLo
               <div className="p-1 min-w-[200px]">
                 <h3 className="font-bold text-lg mb-1">{report.areaName}</h3>
                 <div className="flex gap-2 items-center mb-2">
-                  <span className={`px-2 py-0.5 rounded text-xs font-bold ${report.status === 'ON' ? 'bg-[#fbbf24] text-black' : 'bg-[#ef4444] text-white'}`}>
-                    Power {report.status}
+                  <span className={`px-2 py-0.5 rounded text-xs font-bold ${report.status === 'ON' ? 'bg-[#22c55e] text-white' : 'bg-[#ef4444] text-white'}`}>
+                    {report.status === 'ON' ? 'বিদ্যুৎ আছে' : 'বিদ্যুৎ নেই'}
                   </span>
                   {report.status === 'OFF' && report.startTime && (
                     <span className="text-gray-300 text-xs text-glow">
-                      Since {formatDistanceToNow(new Date(report.startTime), { addSuffix: true })}
+                      {formatBDTime(report.startTime)} থেকে
                     </span>
                   )}
                 </div>

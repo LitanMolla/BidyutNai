@@ -98,7 +98,7 @@ export default function Home() {
 
   const handleAutoLocationReport = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+      alert("আপনার ব্রাউজার লোকেশন সাপোর্ট করে না");
       return;
     }
     
@@ -116,7 +116,7 @@ export default function Home() {
       },
       (error) => {
         console.error("Error getting location", error);
-        alert("You must allow location access to report an outage for your area.");
+        alert("আপনার এলাকার রিপোর্ট দেওয়ার জন্য লোকেশন অ্যাক্সেস দিতে হবে।");
       }
     );
   };
@@ -125,7 +125,7 @@ export default function Home() {
     setReports(prev => [newReport, ...prev]);
     setIsModalOpen(false);
     fetchReports(); // refresh stats
-    showToast("Report submitted successfully!", "success");
+    showToast("রিপোর্ট সফলভাবে জমা হয়েছে!", "success");
   };
 
   return (
