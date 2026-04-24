@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Upload, CheckCircle2, MapPin } from 'lucide-react';
+import { X, Upload, CheckCircle2, MapPin, Loader2 } from 'lucide-react';
 
 export default function ReportModal({ location, onClose, onSubmitSuccess, deviceId, showToast }) {
   const [status, setStatus] = useState('OFF');
@@ -110,99 +110,106 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
 
         <h2 className="text-xl md:text-2xl font-bold text-white mb-6 text-glow">বিদ্যুৎ অবস্হা জানান</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center justify-between">
-              <span>এলাকা / জায়গার নাম *</span>
-              {isFetchingLocation && <span className="text-xs text-[#fbbf24] animate-pulse">চেক করা হচ্ছে...</span>}
-            </label>
-            <div className="relative">
-              <input 
-                type="text" 
-                required
-                placeholder="উদাহরন: মিরপুর ১০, ধানমন্ডি..."
-                className="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-white focus:outline-none focus:border-[#fbbf24] transition-colors"
-                value={areaName}
-                onChange={(e) => setAreaName(e.target.value)}
-              />
-              <MapPin className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
-            </div>
+        {isSubmitting ? (
+          <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-in fade-in duration-300">
+            <Loader2 className="w-16 h-16 text-[#c09a59] animate-spin drop-shadow-[0_0_10px_rgba(192,154,89,0.6)]" />
+            <p className="text-[#c09a59] font-bold animate-pulse text-xl mt-4">রিপোর্ট জমা দেওয়া হচ্ছে...</p>
+            <p className="text-sm text-gray-400 text-center px-4">দয়া করে একটু অপেক্ষা করুন, সার্ভারে ডাটা আপলোড হচ্ছে।</p>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">বর্তমান অবস্থা</label>
-            <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded-lg border border-gray-700">
-              <button
-                type="button"
-                className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md font-bold transition-all ${
-                  status === 'ON' 
-                    ? 'bg-[#22c55e] text-white shadow-[0_0_10px_rgba(34,197,94,0.5)]' 
-                    : 'text-gray-400 hover:text-gray-200'
-                }`}
-                onClick={() => setStatus('ON')}
-              >
-                <span>বিদ্যুৎ আছে</span>
-              </button>
-              <button
-                type="button"
-                className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md font-bold transition-all ${
-                  status === 'OFF' 
-                    ? 'bg-[#ef4444] text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]' 
-                    : 'text-gray-400 hover:text-gray-200'
-                }`}
-                onClick={() => setStatus('OFF')}
-              >
-                <span>বিদ্যুৎ নেই</span>
-              </button>
-            </div>
-          </div>
-
-          {status === 'OFF' && (
-            <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-              <label className="block text-sm font-medium text-gray-300 mb-1">কখন বিদ্যুৎ গেছে</label>
-              <input 
-                type="datetime-local" 
-                className="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#fbbf24] transition-colors"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-              />
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">ছবি - ঐচ্ছিক</label>
-            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer bg-[#1a1a1a] hover:bg-[#222] transition-colors">
-              <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
-                {imageFile ? (
-                  <div className="flex flex-col items-center gap-1 text-[#22c55e]">
-                    <CheckCircle2 className="w-6 h-6" />
-                    <span className="text-xs max-w-[200px] truncate">{imageFile.name}</span>
-                  </div>
-                ) : (
-                  <>
-                    <Upload className="w-6 h-6 text-gray-400 mb-2" />
-                    <p className="text-xs text-gray-400">ছবি আপলোড করতে ক্লিক করুন (সর্বোচ্চ ৫ মেগাবাইট)</p>
-                  </>
-                )}
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center justify-between">
+                <span>এলাকা / জায়গার নাম *</span>
+                {isFetchingLocation && <span className="text-xs text-[#fbbf24] animate-pulse">চেক করা হচ্ছে...</span>}
+              </label>
+              <div className="relative">
+                <input 
+                  type="text" 
+                  required
+                  placeholder="উদাহরন: মিরপুর ১০, ধানমন্ডি..."
+                  className="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-white focus:outline-none focus:border-[#c09a59] transition-colors"
+                  value={areaName}
+                  onChange={(e) => setAreaName(e.target.value)}
+                />
+                <MapPin className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
               </div>
-              <input 
-                type="file" 
-                className="hidden" 
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            </label>
-          </div>
+            </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">বর্তমান অবস্থা</label>
+              <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded-lg border border-gray-700">
+                <button
+                  type="button"
+                  className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md font-bold transition-all ${
+                    status === 'ON' 
+                      ? 'bg-[#22c55e] text-white shadow-[0_0_10px_rgba(34,197,94,0.5)]' 
+                      : 'text-gray-400 hover:text-gray-200'
+                  }`}
+                  onClick={() => setStatus('ON')}
+                >
+                  <span>বিদ্যুৎ আছে</span>
+                </button>
+                <button
+                  type="button"
+                  className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md font-bold transition-all ${
+                    status === 'OFF' 
+                      ? 'bg-[#ef4444] text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]' 
+                      : 'text-gray-400 hover:text-gray-200'
+                  }`}
+                  onClick={() => setStatus('OFF')}
+                >
+                  <span>বিদ্যুৎ নেই</span>
+                </button>
+              </div>
+            </div>
 
-          <button 
-            type="submit" 
-            disabled={isSubmitting}
-            className="w-full py-3 mt-4 flex flex-col items-center justify-center bg-[#c09a59] hover:bg-[#e0b467] text-black font-bold rounded-lg transition-all box-glow disabled:opacity-50"
-          >
-            <span>{isSubmitting ? 'আপলোড হচ্ছে...' : 'রিপোর্ট জমা দিন'}</span>
-          </button>
-        </form>
+            {status === 'OFF' && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                <label className="block text-sm font-medium text-gray-300 mb-1">কখন বিদ্যুৎ গেছে</label>
+                <input 
+                  type="datetime-local" 
+                  className="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#fbbf24] transition-colors"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">ছবি - ঐচ্ছিক</label>
+              <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer bg-[#1a1a1a] hover:bg-[#222] transition-colors">
+                <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                  {imageFile ? (
+                    <div className="flex flex-col items-center gap-1 text-[#22c55e]">
+                      <CheckCircle2 className="w-6 h-6" />
+                      <span className="text-xs max-w-[200px] truncate">{imageFile.name}</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="w-6 h-6 text-gray-400 mb-2" />
+                      <p className="text-xs text-gray-400">ছবি আপলোড করতে ক্লিক করুন (সর্বোচ্চ ৫ মেগাবাইট)</p>
+                    </>
+                  )}
+                </div>
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </label>
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="w-full py-3 mt-4 flex flex-col items-center justify-center bg-[#c09a59] hover:bg-[#e0b467] text-black font-bold rounded-lg transition-all box-glow disabled:opacity-50"
+            >
+              <span>রিপোর্ট জমা দিন</span>
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

@@ -26,6 +26,14 @@ export async function POST(req) {
       duration = Math.round((now - start) / 60000); // duration in minutes
     }
     
+    // Delete earlier reports from the same user for the same area
+    if (body.creatorDeviceId && body.areaName) {
+      await Report.deleteMany({
+        creatorDeviceId: body.creatorDeviceId,
+        areaName: body.areaName
+      });
+    }
+    
     const newReport = await Report.create({
       ...body,
       duration

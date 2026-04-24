@@ -60,6 +60,23 @@ export default function ChatWidget({ deviceId }) {
     }, 100);
   };
 
+  const getTimeAgo = (timestamp) => {
+    if (!timestamp) return '';
+    const diffInSeconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
+    const toBn = n => n.toString().replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+    
+    if (diffInSeconds < 60) return 'এইমাত্র';
+    
+    const minutes = Math.floor(diffInSeconds / 60);
+    if (minutes < 60) return `${toBn(minutes)} মিনিট আগে`;
+    
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${toBn(hours)} ঘণ্টা আগে`;
+    
+    const days = Math.floor(hours / 24);
+    return `${toBn(days)} দিন আগে`;
+  };
+
   const handleSend = async (e) => {
     e.preventDefault();
     if (!inputText.trim()) return;
@@ -125,9 +142,12 @@ export default function ChatWidget({ deviceId }) {
               const isMe = msg.senderId === deviceId;
               return (
                 <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                  <span className={`text-xs mb-1 font-semibold ${isMe ? 'text-[#c09a59]' : 'text-[#fbbf24]'}`}>
-                    {isMe ? 'আপনি' : msg.senderName}
-                  </span>
+                  <div className={`flex items-center gap-2 mb-1 ${isMe ? 'flex-row-reverse' : ''}`}>
+                    <span className={`text-xs font-semibold ${isMe ? 'text-[#c09a59]' : 'text-[#fbbf24]'}`}>
+                      {isMe ? 'আপনি' : msg.senderName}
+                    </span>
+                    <span className="text-[10px] text-gray-500 mt-[1px]">{getTimeAgo(msg.timestamp)}</span>
+                  </div>
                   <div className={`px-4 py-2 rounded-2xl text-sm max-w-[85%] ${
                     isMe 
                       ? 'bg-[#c09a59] text-black rounded-tr-none' 

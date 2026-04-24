@@ -7,7 +7,7 @@ const hindSiliguri = Hind_Siliguri({
 });
 
 export const metadata = {
-  title: "Bidyut Geche? | Live Power Outage Tracker",
+  title: "Bidyut Nai | Live Power Outage Tracker",
   description: "Crowdsourced load-shedding and power outage tracker. Real-time updates and community reports.",
 };
 

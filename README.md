@@ -1,4 +1,4 @@
-# Bidyut Geche? (বিদ্যুৎ গেছে?) - Crowdsourced Load-shedding Tracker
+# Bidyut Nai (বিদ্যুৎ নাই) - Crowdsourced Load-shedding Tracker
 
 A Next.js 16 (App Router) based full-stack web application designed for Bangladeshi users to track, report, and verify power outages (load-shedding) in real-time. The application is built with an extreme focus on UX, accessibility, and zero-login friction.
 

@@ -23,6 +23,7 @@ export default function Home() {
   const [reports, setReports] = useState([]);
   const [stats, setStats] = useState({ on: 0, off: 0, total: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapCenter, setMapCenter] = useState([23.8103, 90.4125]); // Dhaka default
   const [mapZoom, setMapZoom] = useState(12);
@@ -142,7 +143,7 @@ export default function Home() {
         </div>
       )}
 
-      <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
+      <div className="flex flex-1 overflow-hidden flex-col md:flex-row relative">
         {/* Left Side: Map */}
         <div className="w-full h-[55%] md:h-full md:w-[70%] relative z-0">
           <MapComponent 
@@ -154,13 +155,15 @@ export default function Home() {
         </div>
         
         {/* Right Side: Sidebar */}
-        <div className="w-full h-[45%] md:h-full md:w-[30%] border-t md:border-t-0 md:border-l border-[var(--color-dark-glass-border)] z-10 glassmorphism relative">
+        <div className={`w-full transition-all duration-300 ${isSidebarExpanded ? 'absolute inset-0 z-50 h-full bg-[#111] flex flex-col' : 'h-[45%] relative z-10'} md:!static md:!h-full md:w-[30%] border-t md:border-t-0 md:border-l border-[var(--color-dark-glass-border)] glassmorphism`}>
           <ReportSidebar 
             reports={reports} 
             onReportClick={handleSidebarClick} 
             deviceId={deviceId}
             onVote={fetchReports}
             onAddNewReport={handleAutoLocationReport}
+            isExpanded={isSidebarExpanded}
+            onToggleExpand={() => setIsSidebarExpanded(!isSidebarExpanded)}
           />
         </div>
       </div>

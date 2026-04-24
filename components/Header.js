@@ -3,19 +3,14 @@ import { Zap, AlertTriangle, Activity } from 'lucide-react';
 
 export default function Header({ stats }) {
   return (
-    <header className="w-full h-auto min-h-[5rem] py-3 md:py-0 glassmorphism relative z-20 flex flex-col sm:flex-row items-center justify-between px-4 md:px-6 gap-3 border-b border-[var(--color-dark-glass-border)]">
-      <div className="flex items-center gap-2 md:gap-3 w-full sm:w-auto justify-between sm:justify-start">
-        <div className="flex items-center gap-2 md:gap-3">
-          <div className="bg-[#c09a59] p-1.5 md:p-2 rounded-lg bg-opacity-20 border border-[#c09a59] border-opacity-30">
-            <Zap className="text-[#fbbf24] w-5 h-5 md:w-6 md:h-6" />
-          </div>
-          <h1 className="text-lg md:text-2xl font-bold tracking-tight text-white text-glow shrink-0">
-            বিদ্যুৎ গেছে?
-          </h1>
-        </div>
+    <header className="w-full h-[4rem] sm:h-[4.5rem] md:min-h-[5rem] glassmorphism relative z-20 flex flex-row items-center px-3 sm:px-4 md:px-6 gap-3 border-b border-[var(--color-dark-glass-border)] overflow-x-auto scrollbar-hide">
+      <div className="flex items-center shrink-0">
+        <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white text-glow">
+          বিদ্যুৎ নাই?
+        </h1>
       </div>
 
-      <div className="flex gap-2 md:gap-4 w-full sm:w-auto justify-between sm:justify-end overflow-x-auto pb-1 sm:pb-0 scrollbar-hide">
+      <div className="flex gap-2 md:gap-4 items-center ml-auto shrink-0">
         {/* Active Power */}
         <div className="flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-[#1a1a1a] border border-gray-800 box-glow shrink-0">
           <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#22c55e] animate-pulse shadow-[0_0_8px_#22c55e]"></div>

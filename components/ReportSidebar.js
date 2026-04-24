@@ -1,8 +1,10 @@
 'use client';
-import { ThumbsUp, ThumbsDown, ShieldCheck, Clock } from 'lucide-react';
+import { useState } from 'react';
+import { ThumbsUp, ThumbsDown, ShieldCheck, Clock, Maximize2, Minimize2 } from 'lucide-react';
 // Removed date-fns usage for exact BD time
 
-export default function ReportSidebar({ reports, onReportClick, deviceId, onVote, onAddNewReport }) {
+export default function ReportSidebar({ reports, onReportClick, deviceId, onVote, onAddNewReport, isExpanded, onToggleExpand }) {
+  const [filter, setFilter] = useState('all');
   
   const formatBDTime = (dateString) => {
     try {
@@ -40,7 +42,16 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
   return (
     <div className="flex flex-col h-full w-full">
       <div className="p-4 border-b border-[var(--color-dark-glass-border)] flex items-center justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-[#c09a59] text-glow">লাইভ রিপোর্টস</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-xl md:text-2xl font-bold text-[#c09a59] text-glow">লাইভ রিপোর্টস</h2>
+          <button 
+            onClick={onToggleExpand} 
+            className="md:hidden p-1.5 rounded-md bg-[#2a2a2a] hover:bg-[#333] text-gray-400 hover:text-white transition-colors"
+            title={isExpanded ? "ছোট করুন" : "বড় করুন"}
+          >
+            {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          </button>
+        </div>
         <button 
           onClick={onAddNewReport}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-[#c09a59] hover:bg-[#fbbf24] text-black text-xs sm:text-sm font-bold rounded-lg transition-all box-glow shrink-0"
@@ -52,12 +63,29 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
           </span>
         </button>
       </div>
+
+      <div className="flex border-b border-[var(--color-dark-glass-border)] bg-[#161616]">
+        <button 
+          className={`flex-1 py-2 text-sm font-bold transition-colors ${filter === 'all' ? 'text-[#c09a59] border-b-2 border-[#c09a59]' : 'text-gray-400 hover:text-gray-200'}`}
+          onClick={() => setFilter('all')}
+        >
+          সব রিপোর্ট
+        </button>
+        <button 
+          className={`flex-1 py-2 text-sm font-bold transition-colors ${filter === 'my' ? 'text-[#c09a59] border-b-2 border-[#c09a59]' : 'text-gray-400 hover:text-gray-200'}`}
+          onClick={() => setFilter('my')}
+        >
+          আমার রিপোর্ট
+        </button>
+      </div>
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {reports.length === 0 ? (
-          <div className="text-center text-gray-500 mt-10">এখনো কোনো রিপোর্ট নেই</div>
-        ) : (
-          reports.map(report => {
+        {(() => {
+          const filteredReports = filter === 'all' ? reports : reports.filter(r => r.creatorDeviceId === deviceId);
+          if (filteredReports.length === 0) {
+            return <div className="text-center text-gray-500 mt-10">এখনো কোনো রিপোর্ট নেই</div>;
+          }
+          return filteredReports.map(report => {
             const isOwner = report.creatorDeviceId === deviceId;
             const hasVoted = report.votedBy?.includes(deviceId);
             const score = (report.votes?.trueCount || 0) - (report.votes?.falseCount || 0);
@@ -129,8 +157,8 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
                 </div>
               </div>
             );
-          })
-        )}
+          });
+        })()}
       </div>
     </div>
   );
