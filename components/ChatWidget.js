@@ -9,7 +9,7 @@ export default function ChatWidget({ deviceId }) {
   const [inputText, setInputText] = useState('');
   const [userName, setUserName] = useState('');
   const [showNameModal, setShowNameModal] = useState(false);
-  const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   useEffect(() => {
     // Check locally for username
@@ -25,7 +25,7 @@ export default function ChatWidget({ deviceId }) {
     // Setup Pusher
     const pusherKey = process.env.NEXT_PUBLIC_PUSHER_KEY || 'dummy_key';
     const pusherCluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'mt1';
-    
+
     // Only connect if we have a real key configured to avoid errors
     if (pusherKey !== 'dummy_key') {
       const pusher = new Pusher(pusherKey, {
@@ -56,7 +56,7 @@ export default function ChatWidget({ deviceId }) {
 
   const scrollToBottom = () => {
     setTimeout(() => {
-      const container = messagesEndRef.current?.parentElement;
+      const container = chatContainerRef.current;
       if (container) {
         container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
       }
@@ -67,15 +67,15 @@ export default function ChatWidget({ deviceId }) {
     if (!timestamp) return '';
     const diffInSeconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
     const toBn = n => n.toString().replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
-    
+
     if (diffInSeconds < 60) return 'এইমাত্র';
-    
+
     const minutes = Math.floor(diffInSeconds / 60);
     if (minutes < 60) return `${toBn(minutes)} মিনিট আগে`;
-    
+
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${toBn(hours)} ঘণ্টা আগে`;
-    
+
     const days = Math.floor(hours / 24);
     return `${toBn(days)} দিন আগে`;
   };
@@ -123,7 +123,7 @@ export default function ChatWidget({ deviceId }) {
   return (
     <>
       {/* Toggle Button */}
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 z-40 bg-[#c09a59] text-black p-4 rounded-full shadow-[0_0_20px_rgba(192,154,89,0.5)] hover:scale-105 transition-transform"
       >
@@ -139,8 +139,8 @@ export default function ChatWidget({ deviceId }) {
               পাবলিক লাইভ চ্যাট
             </h3>
           </div>
-          
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+
+          <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((msg, idx) => {
               const isMe = msg.senderId === deviceId;
               return (
@@ -151,29 +151,28 @@ export default function ChatWidget({ deviceId }) {
                     </span>
                     <span className="text-[10px] text-gray-500 mt-[1px]">{getTimeAgo(msg.timestamp)}</span>
                   </div>
-                  <div className={`px-4 py-2 rounded-2xl text-sm max-w-[85%] ${
-                    isMe 
-                      ? 'bg-[#c09a59] text-black rounded-tr-none' 
+                  <div className={`px-4 py-2 rounded-2xl text-sm max-w-[85%] ${isMe
+                      ? 'bg-[#c09a59] text-black rounded-tr-none'
                       : 'bg-[#1a1a1a] text-white border border-gray-700 rounded-tl-none'
-                  }`}>
+                    }`}>
                     {msg.message}
                   </div>
                 </div>
               );
             })}
-            <div ref={messagesEndRef} className="h-12 shrink-0 w-full" />
+            <div className="h-6 w-full shrink-0" />
           </div>
 
           <div className="p-3 bg-black bg-opacity-50 border-t border-gray-700">
             <form onSubmit={handleSend} className="flex gap-2">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={userName ? "মেসেজ লিখুন..." : "চ্যাট করতে ক্লিক করুন..."}
                 className="flex-1 bg-[#1a1a1a] text-white text-sm rounded-full px-4 py-2 border border-gray-700 focus:outline-none focus:border-[#c09a59] transition-colors"
               />
-              <button 
+              <button
                 type="submit"
                 className="p-2 bg-[#c09a59] text-black rounded-full hover:bg-[#fbbf24] transition-colors disabled:opacity-50"
                 disabled={!inputText.trim()}
@@ -191,23 +190,23 @@ export default function ChatWidget({ deviceId }) {
           <div className="w-72 p-6 glassmorphism rounded-xl border border-[#c09a59]">
             <h3 className="text-xl font-bold text-white mb-4 text-glow">চ্যাটে জয়েন করুন</h3>
             <form onSubmit={handleSaveName}>
-              <input 
+              <input
                 name="name"
-                type="text" 
+                type="text"
                 required
                 placeholder="আপনার নাম লিখুন"
                 className="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg px-4 py-2 text-white mb-4 focus:outline-none focus:border-[#fbbf24]"
                 autoFocus
               />
               <div className="flex gap-2">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setShowNameModal(false)}
                   className="flex-1 py-2 text-gray-400 hover:text-white"
                 >
                   ক্যান্সেল
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="flex-1 py-2 bg-[#c09a59] text-black font-bold rounded-lg box-glow"
                 >
