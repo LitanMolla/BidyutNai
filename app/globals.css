@@ -78,16 +78,23 @@
 
 /* Leaflet dark mode tweaks */
 .leaflet-container {
-  background-color: #0d0d0d !important;
+  background: #0a0a0a !important;
   font-family: inherit !important;
 }
-.leaflet-popup-content-wrapper, .leaflet-popup-tip {
-  background: rgba(20, 20, 20, 0.8) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+
+.glass-popup .leaflet-popup-content-wrapper,
+.leaflet-popup-content-wrapper {
+  background: rgba(20, 20, 20, 0.95) !important;
   color: #fff !important;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(192, 154, 89, 0.3);
 }
+
+.glass-popup .leaflet-popup-tip,
+.leaflet-popup-tip {
+  background: rgba(20, 20, 20, 0.95) !important;
+}
+
 .leaflet-bar a {
   background-color: rgba(20, 20, 20, 0.8) !important;
   color: #fff !important;

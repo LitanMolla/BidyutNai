@@ -33,29 +33,26 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+      const file = e.target.files[0];
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Image must be less than 2MB (ছবি ২ মেগাবাইটের কম হতে হবে)');
+        return;
+      }
+      setImageFile(file);
     }
   };
 
-  const uploadToCloudinary = async (file) => {
-    // In a real app we would use NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME 
-    // and an unsigned upload preset NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
-    // const formData = new FormData();
-    // formData.append('file', file);
-    // formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
-    // const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
-    //   method: 'POST',
-    //   body: formData,
-    // });
-    // const data = await res.json();
-    // return data.secure_url;
+  const uploadToImgBB = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
     
-    // For demo purposes returning a placeholder when keys aren't set
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve("https://images.unsplash.com/photo-1506517042571-33120138971f?w=800&q=80"); // Generic dark street
-      }, 1000);
+    const API_KEY = '2d8c1e752f830dc0e7fcdc4a5fc38e05';
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
+      method: 'POST',
+      body: formData,
     });
+    const data = await res.json();
+    return data.data.url;
   };
 
   const handleSubmit = async (e) => {
@@ -65,7 +62,7 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
     try {
       let imageUrl = null;
       if (imageFile) {
-        imageUrl = await uploadToCloudinary(imageFile);
+        imageUrl = await uploadToImgBB(imageFile);
       }
 
       const res = await fetch('/api/reports', {
@@ -89,6 +86,7 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
       }
     } catch (err) {
       console.error(err);
+      alert('Failed to submit report. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -104,12 +102,12 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
           <X className="w-6 h-6" />
         </button>
 
-        <h2 className="text-2xl font-bold text-white mb-6 text-glow">Report Power Status</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-white mb-6 text-glow">Report Power Status <br/><span className="text-sm font-normal text-gray-400">(বিদ্যুৎ অবস্হা জানান)</span></h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center justify-between">
-              <span>Area / Location Name *</span>
+              <span>Area / Location Name <span className="text-xs text-gray-400 ml-1">(এলাকা / জায়গার নাম)</span> *</span>
               {isFetchingLocation && <span className="text-xs text-[#fbbf24] animate-pulse">Detecting...</span>}
             </label>
             <div className="relative">
@@ -126,36 +124,38 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Current Status</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Current Status <span className="text-xs text-gray-400 ml-1">(বর্তমান অবস্থা)</span></label>
             <div className="flex gap-2 p-1 bg-[#1a1a1a] rounded-lg border border-gray-700">
               <button
                 type="button"
-                className={`flex-1 py-2 rounded-md font-bold transition-all ${
+                className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md font-bold transition-all ${
                   status === 'ON' 
                     ? 'bg-[#fbbf24] text-black shadow-[0_0_10px_rgba(251,191,36,0.5)]' 
                     : 'text-gray-400 hover:text-gray-200'
                 }`}
                 onClick={() => setStatus('ON')}
               >
-                Power ON
+                <span>Power ON</span>
+                <span className="text-xs font-normal opacity-80">(বিদ্যুৎ আছে)</span>
               </button>
               <button
                 type="button"
-                className={`flex-1 py-2 rounded-md font-bold transition-all ${
+                className={`flex-1 flex flex-col items-center justify-center py-2 rounded-md font-bold transition-all ${
                   status === 'OFF' 
                     ? 'bg-[#ef4444] text-white shadow-[0_0_10px_rgba(239,68,68,0.5)]' 
                     : 'text-gray-400 hover:text-gray-200'
                 }`}
                 onClick={() => setStatus('OFF')}
               >
-                Power OFF
+                <span>Power OFF</span>
+                <span className="text-xs font-normal opacity-80">(বিদ্যুৎ নেই)</span>
               </button>
             </div>
           </div>
 
           {status === 'OFF' && (
             <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-              <label className="block text-sm font-medium text-gray-300 mb-1">Outage Start Time</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Outage Start Time <span className="text-xs text-gray-400 ml-1">(কখন বিদ্যুৎ গেছে)</span></label>
               <input 
                 type="datetime-local" 
                 className="w-full bg-[#1a1a1a] border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#fbbf24] transition-colors"
@@ -166,18 +166,18 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Photo Proof (Optional)</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Photo Proof <span className="text-xs text-gray-400 ml-1">(ছবি - ঐচ্ছিক)</span></label>
             <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer bg-[#1a1a1a] hover:bg-[#222] transition-colors">
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
                 {imageFile ? (
-                  <div className="flex items-center gap-2 text-[#fbbf24]">
+                  <div className="flex flex-col items-center gap-1 text-[#fbbf24]">
                     <CheckCircle2 className="w-6 h-6" />
-                    <span className="text-sm">{imageFile.name}</span>
+                    <span className="text-xs max-w-[200px] truncate">{imageFile.name}</span>
                   </div>
                 ) : (
                   <>
                     <Upload className="w-6 h-6 text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-400">Click to upload image</p>
+                    <p className="text-xs text-gray-400">Click to upload image (Max 2MB)</p>
                   </>
                 )}
               </div>
@@ -193,9 +193,10 @@ export default function ReportModal({ location, onClose, onSubmitSuccess, device
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="w-full py-3 mt-4 bg-[#c09a59] hover:bg-[#e0b467] text-black font-bold rounded-lg transition-all box-glow disabled:opacity-50"
+            className="w-full py-3 mt-4 flex flex-col items-center justify-center bg-[#c09a59] hover:bg-[#e0b467] text-black font-bold rounded-lg transition-all box-glow disabled:opacity-50"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit Report'}
+            <span>{isSubmitting ? 'Submitting...' : 'Submit Report'}</span>
+            <span className="text-xs font-normal opacity-80">{isSubmitting ? 'আপলোড হচ্ছে...' : '(রিপোর্ট জমা দিন)'}</span>
           </button>
         </form>
       </div>

@@ -1,7 +1,10 @@
-import { Inter } from "next/font/google";
+import { Hind_Siliguri } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const hindSiliguri = Hind_Siliguri({ 
+  subsets: ["latin", "bengali"],
+  weight: ['300', '400', '500', '600', '700'] 
+});
 
 export const metadata = {
   title: "Bidyut Geche? | Live Power Outage Tracker",
@@ -11,7 +14,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} min-h-screen flex flex-col bg-background text-foreground overflow-hidden`}>
+      <body className={`${hindSiliguri.className} min-h-screen flex flex-col bg-background text-foreground overflow-hidden`}>
         {children}
       </body>
     </html>

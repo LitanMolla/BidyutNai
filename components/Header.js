@@ -26,7 +26,7 @@ export default function Header({ stats, onReportClick }) {
 
       <div className="flex gap-2 md:gap-4 w-full sm:w-auto justify-between sm:justify-end overflow-x-auto pb-1 sm:pb-0 scrollbar-hide">
         {/* Active Power */}
-        <div className="flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-white bg-opacity-5 border border-white border-opacity-10 box-glow shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-[#1a1a1a] border border-gray-800 box-glow shrink-0">
           <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#fbbf24] animate-pulse"></div>
           <div>
             <div className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider hidden sm:block">Power Active</div>
@@ -35,7 +35,7 @@ export default function Header({ stats, onReportClick }) {
         </div>
 
         {/* Power Off */}
-        <div className="flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-white bg-opacity-5 border border-white border-opacity-10 shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-[#1a1a1a] border border-gray-800 shrink-0">
           <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-[#ef4444]"></div>
           <div>
             <div className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider hidden sm:block">Power Off</div>
@@ -44,7 +44,7 @@ export default function Header({ stats, onReportClick }) {
         </div>
 
         {/* Total Reports */}
-        <div className="flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-white bg-opacity-5 border border-white border-opacity-10 shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-xl bg-[#1a1a1a] border border-gray-800 shrink-0">
           <Activity className="w-4 h-4 md:w-5 md:h-5 text-white opacity-50" />
           <div>
             <div className="text-[10px] md:text-xs text-gray-400 uppercase tracking-wider hidden sm:block">Total Reports</div>

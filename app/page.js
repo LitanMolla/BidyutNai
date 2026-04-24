@@ -66,20 +66,17 @@ export default function Home() {
     }
   };
 
-  const handleMapClick = (latlng) => {
-    setSelectedLocation(latlng);
-    setIsModalOpen(true);
-  };
-
-  const handleReportAdded = (newReport) => {
-    setReports(prev => [newReport, ...prev]);
-    setIsModalOpen(false);
-    fetchReports(); // refresh stats
-  };
-
   const handleSidebarClick = (report) => {
     setMapCenter([report.location.lat, report.location.lng]);
     setMapZoom(16);
+  };
+
+  const [userLocation, setUserLocation] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message) => {
+    setToast(message);
+    setTimeout(() => setToast(null), 3000);
   };
 
   // Ask for location immediately on visit
@@ -89,6 +86,7 @@ export default function Home() {
         (position) => {
           const { latitude, longitude } = position.coords;
           setMapCenter([latitude, longitude]);
+          setUserLocation([latitude, longitude]);
           setMapZoom(14);
         },
         (error) => {
@@ -111,6 +109,7 @@ export default function Home() {
         const latlng = { lat: latitude, lng: longitude };
         
         setMapCenter([latitude, longitude]);
+        setUserLocation([latitude, longitude]);
         setMapZoom(16);
         setSelectedLocation(latlng);
         setIsModalOpen(true);
@@ -122,23 +121,36 @@ export default function Home() {
     );
   };
 
+  const handleReportAdded = (newReport) => {
+    setReports(prev => [newReport, ...prev]);
+    setIsModalOpen(false);
+    fetchReports(); // refresh stats
+    showToast("Report submitted successfully!");
+  };
+
   return (
     <main className="flex flex-col h-screen w-full relative">
       <Header stats={stats} onReportClick={handleAutoLocationReport} />
       
-      <div className="flex flex-1 overflow-hidden">
+      {toast && (
+        <div className="fixed top-24 right-4 z-50 bg-[#fbbf24] text-black font-bold px-6 py-3 rounded-lg shadow-[0_0_15px_rgba(251,191,36,0.5)] animate-in slide-in-from-right-5 fade-in duration-300">
+          {toast}
+        </div>
+      )}
+
+      <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
         {/* Left Side: Map */}
-        <div className="w-full md:w-[70%] h-full relative z-0">
+        <div className="w-full h-[55%] md:h-full md:w-[70%] relative z-0">
           <MapComponent 
             reports={reports} 
-            onMapClick={handleMapClick}
             center={mapCenter}
             zoom={mapZoom}
+            userLocation={userLocation}
           />
         </div>
         
         {/* Right Side: Sidebar */}
-        <div className="w-full md:w-[30%] h-full hidden md:block border-l border-[var(--color-dark-glass-border)] z-10 glassmorphism relative">
+        <div className="w-full h-[45%] md:h-full md:w-[30%] border-t md:border-t-0 md:border-l border-[var(--color-dark-glass-border)] z-10 glassmorphism relative">
           <ReportSidebar 
             reports={reports} 
             onReportClick={handleSidebarClick} 

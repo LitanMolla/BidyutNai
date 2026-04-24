@@ -43,7 +43,7 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
               <div 
                 key={report._id}
                 onClick={() => onReportClick(report)}
-                className={`relative p-4 rounded-xl transition-all cursor-pointer border border-[#c09a59] border-opacity-10 bg-white bg-opacity-5 hover:bg-opacity-10
+                className={`relative p-4 rounded-xl transition-all cursor-pointer border border-[#c09a59] border-opacity-10 bg-[#1a1a1a] hover:bg-[#222]
                   ${isBlurred ? 'blur-[3px] opacity-60 hover:blur-none hover:opacity-100' : ''}
                 `}
               >

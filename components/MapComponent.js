@@ -10,30 +10,15 @@ import { formatDistanceToNow } from 'date-fns';
 
 const createIcon = (status) => {
   const color = status === 'ON' ? '#fbbf24' : '#ef4444';
-  const svgIcon = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-      <circle cx="12" cy="10" r="3" fill="#000"></circle>
-    </svg>
-  `;
   
   return L.divIcon({
-    className: 'custom-marker',
-    html: `<div style="width: 32px; height: 32px; filter: drop-shadow(0 0 8px ${color});">${svgIcon}</div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
+    className: 'custom-dot-marker',
+    html: `<div style="width: 14px; height: 14px; background-color: ${color}; border: 2px solid #000; border-radius: 50%; box-shadow: 0 0 10px ${color}"></div>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+    popupAnchor: [0, -7],
   });
 };
-
-function ClickHandler() {
-  useMapEvents({
-    click: (e) => {
-      alert("You can only report for your current location. Please use the 'Report Outage' button at the top.");
-    },
-  });
-  return null;
-}
 
 function MapUpdater({ center, zoom }) {
   const map = useMapEvents({});
@@ -43,7 +28,7 @@ function MapUpdater({ center, zoom }) {
   return null;
 }
 
-export default function MapComponent({ reports, onMapClick, center, zoom }) {
+export default function MapComponent({ reports, onMapClick, center, zoom, userLocation }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -65,8 +50,21 @@ export default function MapComponent({ reports, onMapClick, center, zoom }) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           className="map-tiles-dark"
         />
-        <ClickHandler onMapClick={onMapClick} />
         <MapUpdater center={center} zoom={zoom} />
+
+        {userLocation && (
+          <Marker 
+            position={userLocation} 
+            icon={L.divIcon({
+              className: 'user-location-marker',
+              html: `<div style="width: 20px; height: 20px; background-color: #3b82f6; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 15px rgba(59, 130, 246, 0.8), 0 0 0 4px rgba(59, 130, 246, 0.3);"></div>`,
+              iconSize: [20, 20],
+              iconAnchor: [10, 10],
+            })}
+          >
+            <Popup className="glass-popup">You are here</Popup>
+          </Marker>
+        )}
         
         {reports.map((report) => (
           <Marker 
