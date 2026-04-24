@@ -1,11 +1,17 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ThumbsUp, ThumbsDown, ShieldCheck, Clock, Maximize2, Minimize2, X } from 'lucide-react';
 // Removed date-fns usage for exact BD time
 
 export default function ReportSidebar({ reports, onReportClick, deviceId, onVote, onAddNewReport, isExpanded, onToggleExpand }) {
   const [filter, setFilter] = useState('all');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   const formatBDTime = (dateString) => {
     try {
@@ -169,26 +175,28 @@ export default function ReportSidebar({ reports, onReportClick, deviceId, onVote
       </div>
 
       {/* Fullscreen Image Modal */}
-      {selectedImage && (
+      {selectedImage && mounted && createPortal(
         <div 
-          className="fixed inset-0 z-[120] bg-black bg-opacity-90 flex items-center justify-center p-4 md:p-10 animate-in fade-in zoom-in-95 duration-200"
+          className="fixed inset-0 z-[1000] bg-black bg-opacity-90 flex items-center justify-center p-4 md:p-10 animate-in fade-in zoom-in-95 duration-200"
           onClick={() => setSelectedImage(null)}
         >
-          <button 
-            className="absolute top-4 right-4 md:top-6 md:right-6 text-white bg-[#1a1a1a] border border-gray-600 p-2 rounded-full hover:bg-gray-800 transition-colors z-10"
-            onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
-          >
-            <X className="w-6 h-6" />
-          </button>
-          <div className="relative max-w-5xl max-h-full w-full h-full flex items-center justify-center">
+          <div className="relative inline-block">
+             <button 
+               className="absolute -top-3 -right-3 md:-top-4 md:-right-4 text-white bg-[#1a1a1a] border border-[#c09a59] shadow-[0_0_15px_rgba(0,0,0,0.8)] p-1.5 md:p-2 rounded-full hover:bg-[#c09a59] hover:text-black transition-colors z-[1010]"
+               onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
+               title="Close"
+             >
+               <X className="w-5 h-5 md:w-6 md:h-6" />
+             </button>
              <img 
                src={selectedImage} 
                alt="Full size proof" 
-               className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+               className="max-w-[90vw] max-h-[85vh] object-contain rounded-xl shadow-2xl border border-gray-800"
                onClick={(e) => e.stopPropagation()}
              />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
