@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import ReportSidebar from '@/components/ReportSidebar';
 import ReportModal from '@/components/ReportModal';
 import ChatWidget from '@/components/ChatWidget';
+import { Loader2 } from 'lucide-react';
 
 // Dynamically import map with SSR disabled
 const MapComponent = dynamic(() => import('@/components/MapComponent'), {
@@ -24,6 +25,7 @@ export default function Home() {
   const [stats, setStats] = useState({ on: 0, off: 0, total: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isFetchingGeo, setIsFetchingGeo] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [mapCenter, setMapCenter] = useState([23.8103, 90.4125]); // Dhaka default
   const [mapZoom, setMapZoom] = useState(12);
@@ -103,6 +105,8 @@ export default function Home() {
       return;
     }
     
+    setIsFetchingGeo(true);
+    
     // Show a small UI or rely on browser prompt
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -114,10 +118,12 @@ export default function Home() {
         setMapZoom(16);
         setSelectedLocation(latlng);
         setIsModalOpen(true);
+        setIsFetchingGeo(false);
       },
       (error) => {
         console.error("Error getting location", error);
         alert("আপনার এলাকার রিপোর্ট দেওয়ার জন্য লোকেশন অ্যাক্সেস দিতে হবে।");
+        setIsFetchingGeo(false);
       }
     );
   };
@@ -140,6 +146,14 @@ export default function Home() {
             : 'bg-[#22c55e] text-white shadow-[0_0_15px_rgba(34,197,94,0.5)]'
         }`}>
           {toast.message}
+        </div>
+      )}
+
+      {isFetchingGeo && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+          <Loader2 className="w-16 h-16 text-[#c09a59] animate-spin mb-4 drop-shadow-[0_0_10px_rgba(192,154,89,0.5)]" />
+          <h2 className="text-xl font-bold text-[#c09a59] mb-2 text-glow">লোকেশন চেক করা হচ্ছে...</h2>
+          <p className="text-gray-300 text-sm text-center">সঠিক রিপোর্ট দেওয়ার জন্য জিপিএস লোকেশন নেওয়া হচ্ছে</p>
         </div>
       )}
 

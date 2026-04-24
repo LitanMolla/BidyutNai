@@ -56,7 +56,7 @@ export default function ChatWidget({ deviceId }) {
 
   const scrollToBottom = () => {
     setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }, 100);
   };
 
@@ -158,7 +158,7 @@ export default function ChatWidget({ deviceId }) {
                 </div>
               );
             })}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} className="h-6" />
           </div>
 
           <div className="p-3 bg-black bg-opacity-50 border-t border-gray-700">
