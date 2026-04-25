@@ -3,6 +3,19 @@ import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import Pusher from 'pusher-js';
 
+const badWords = [
+  'bokachoda', 'madarchod', 'sala', 'kutta', 'suor', 'khanki', 'magi', 'bara', 
+  'chudan', 'halar', 'putki', 'gandu', 'choda', 'shala', 'shuar', 'khanqi', 
+  'fuck', 'bitch', 'dick', 'pussy', 'asshole', 'bastard', 'whore', 'slut', 'cunt',
+  'bal', 'baal', 'coda'
+];
+
+const isVulgar = (text) => {
+  if (!text) return false;
+  const lowerText = text.toLowerCase();
+  return badWords.some(word => lowerText.includes(word));
+};
+
 export default function ChatWidget({ deviceId }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -150,10 +163,16 @@ export default function ChatWidget({ deviceId }) {
           <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((msg, idx) => {
               const isMe = msg.senderId === deviceId;
+              const hasVulgarName = !isMe && isVulgar(msg.senderName);
               return (
                 <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                   <div className={`flex items-center gap-2 mb-1 ${isMe ? 'flex-row-reverse' : ''}`}>
-                    <span className={`text-xs font-semibold ${isMe ? 'text-[#c09a59]' : 'text-[#fbbf24]'}`}>
+                    <span 
+                      className={`text-xs font-semibold transition-all ${
+                        hasVulgarName ? 'blur-[4px] select-none text-gray-500 hover:blur-none cursor-help' : isMe ? 'text-[#c09a59]' : 'text-[#fbbf24]'
+                      }`}
+                      title={hasVulgarName ? 'Inappropriate name hidden' : ''}
+                    >
                       {isMe ? 'আপনি' : msg.senderName}
                     </span>
                     <span className="text-[10px] text-gray-500 mt-[1px]">{getTimeAgo(msg.timestamp)}</span>
