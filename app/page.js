@@ -82,14 +82,18 @@ export default function Home() {
         const data = await res.json();
         setReports(data.reports);
         
-        // Calculate stats
-        const onCount = data.reports.filter(r => r.status === 'ON').length;
-        const offCount = data.reports.filter(r => r.status === 'OFF').length;
-        setStats({
-          on: onCount,
-          off: offCount,
-          total: data.reports.length
-        });
+        if (data.stats) {
+          setStats(data.stats);
+        } else {
+          // Calculate stats
+          const onCount = data.reports.filter(r => r.status === 'ON').length;
+          const offCount = data.reports.filter(r => r.status === 'OFF').length;
+          setStats({
+            on: onCount,
+            off: offCount,
+            total: data.reports.length
+          });
+        }
       }
     } catch (err) {
       console.error("Failed to fetch reports:", err);

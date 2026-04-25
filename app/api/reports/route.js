@@ -7,7 +7,21 @@ export async function GET() {
     await dbConnect();
     // Get Reports sorted by newest
     const reports = await Report.find({}).sort({ createdAt: -1 }).limit(50);
-    return NextResponse.json({ success: true, reports });
+    
+    // Calculate accurate total stats
+    const totalReports = await Report.countDocuments();
+    const onReports = await Report.countDocuments({ status: 'ON' });
+    const offReports = await Report.countDocuments({ status: 'OFF' });
+
+    return NextResponse.json({ 
+      success: true, 
+      reports,
+      stats: {
+        total: totalReports,
+        on: onReports,
+        off: offReports
+      }
+    });
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
