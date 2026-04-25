@@ -6,8 +6,8 @@ import { pusherServer } from '@/lib/pusher';
 export async function GET() {
   try {
     await dbConnect();
-    // Get last 50 messages
-    const messages = await Chat.find({}).sort({ timestamp: 1 }).limit(50);
+    // Get all messages
+    const messages = await Chat.find({}).sort({ timestamp: 1 });
     return NextResponse.json({ success: true, messages });
   } catch (err) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });

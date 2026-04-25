@@ -98,12 +98,19 @@ export default function ChatWidget({ deviceId }) {
     setInputText('');
 
     try {
-      await fetch('/api/chat', {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      // New message will come through socket or polling
+      const data = await res.json();
+      if (data.success && data.message) {
+        setMessages(prev => {
+          // Prevent duplicates if socket/polling beat us to it
+          if (prev.find(m => m._id === data.message._id)) return prev;
+          return [...prev, data.message];
+        });
+      }
       scrollToBottom();
     } catch (err) {
       console.error(err);
